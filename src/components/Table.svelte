@@ -41,7 +41,7 @@
 	}
 
 	tr {
-		@apply border-neutral-600 border-b-4;
+		@apply border-neutral-500 border-b-4 bg-neutral-700;
 	}
 
 	tr:last-of-type {
@@ -65,7 +65,7 @@
 	}
 
 	#current {
-		@apply bg-green-900 text-white;
+		@apply bg-yellow-50 text-neutral-950;
 	}
 	/* ----------------------------------
 		Table end

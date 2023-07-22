@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import type { GameContext } from '$lib';
+	import { onMount } from 'svelte';
 	import Table from '../components/Table.svelte';
 
 	let context: GameContext = {
@@ -7,8 +9,16 @@
 		players: []
 	};
 
-	let name = '';
-	let initiative = '';
+	onMount(() => {
+		if (browser) context = JSON.parse(localStorage.getItem('gameContext') ?? '');
+	});
+
+	let name: string = '';
+	let initiative: number = NaN;
+
+	function updateLocalstorage() {
+		if (browser) localStorage.setItem('gameContext', JSON.stringify(context));
+	}
 
 	function addPlayer(event: any) {
 		event.preventDefault();
@@ -17,13 +27,14 @@
 			// Add the new player to the context
 			context.players.push({
 				name: name,
-				initiative: parseInt(initiative)
+				initiative: initiative
 			});
 
 			// Clear the input fields after adding the player
 			name = '';
-			initiative = '';
+			initiative = NaN;
 			context = context;
+			updateLocalstorage();
 
 			const nameInput = document.getElementById('name');
 
@@ -34,12 +45,12 @@
 	}
 
 	function nextPlayer() {
-		console.log(context.currentPlayer);
-
 		if (context.players.length > 0) {
 			context.currentPlayer = (context.currentPlayer + 1) % context.players.length;
 		}
+
 		context = context;
+		updateLocalstorage();
 	}
 
 	function resetInfo() {
@@ -52,7 +63,7 @@
 	}
 </script>
 
-<div class="flex flex-col gap-5">
+<div class="flex flex-col gap-10 w-full">
 	<h1 class="text-3xl font-bold mt-10 mb-16 text-center">Initiative tracker</h1>
 
 	<Table
@@ -67,15 +78,10 @@
 		{context.currentPlayer == -1 ? 'Start game' : 'Next Player'}
 	</button>
 
-	<button
-		class="bg-fuchsia-600 hover:bg-fuchsia-900 text-white font-bold py-2 px-4 rounded"
-		on:click={resetInfo}
-	>
-		Reset
-	</button>
+	<div class="my-10 md:my-16" />
 
-	<form class="flex flex-col gap-5 mt-10" on:submit={addPlayer}>
-		<h2>Add player</h2>
+	<form class="flex flex-col gap-8 p-6 border-2 rounded-lg" on:submit={addPlayer}>
+		<h2 class="mb-2 mt-0">Add player</h2>
 		<div>
 			<label class="block text-neutral-300 text-sm font-bold mb-2" for="name">Name</label>
 			<input
@@ -87,9 +93,9 @@
 			/>
 		</div>
 		<div>
-			<label class="block text-neutral-300 text-sm font-bold mb-2" for="initiative"
-				>Initiative</label
-			>
+			<label class="block text-neutral-300 text-sm font-bold mb-2" for="initiative">
+				Initiative
+			</label>
 			<input
 				type="number"
 				placeholder="10"
@@ -101,9 +107,19 @@
 
 		<button
 			class="bg-fuchsia-600 hover:bg-fuchsia-900 text-white font-bold py-2 px-4 rounded"
-			type="submit">Add Player</button
+			type="submit"
 		>
+			Add Player
+		</button>
 	</form>
+
+	<button
+		type="button"
+		class="bg-fuchsia-600 hover:bg-fuchsia-900 text-white font-bold py-2 px-4 rounded"
+		on:click={resetInfo}
+	>
+		Reset game
+	</button>
 </div>
 
 <style lang="postcss">
