@@ -2,4 +2,4 @@
 
 TODO:
 
-- add an easy way to modify the initiative
+- add an easy way to modify the initiative value
