@@ -1,10 +1,13 @@
 <script lang="ts">
 	import '../app.css';
+	import Footer from '../components/Footer.svelte';
 </script>
 
 <main class="mx-auto container">
 	<slot />
 </main>
+
+<Footer />
 
 <style lang="postcss">
 	:global(html),

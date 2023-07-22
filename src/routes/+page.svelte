@@ -1,16 +1,23 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import type { GameContext } from '$lib';
+	import type { GameContext, Player } from '$lib';
 	import { onMount } from 'svelte';
 	import Table from '../components/Table.svelte';
+	import { comparePlayers } from '$lib/comparePlayers';
 
 	let context: GameContext = {
 		currentPlayer: -1,
 		players: []
 	};
 
+	function reloadLocalstorage() {
+		if (browser && localStorage.getItem('gameContext') != '') {
+			context = JSON.parse(localStorage.getItem('gameContext') ?? '');
+		}
+	}
+
 	onMount(() => {
-		if (browser) context = JSON.parse(localStorage.getItem('gameContext') ?? '');
+		reloadLocalstorage();
 	});
 
 	let name: string = '';
@@ -24,11 +31,30 @@
 		event.preventDefault();
 
 		if (name && initiative) {
+			let nextPlayerToRemainEqual: Player | null = null;
+
+			if (
+				context.currentPlayer != -1 &&
+				context.currentPlayer < context.players.length &&
+				context.players[context.currentPlayer]
+			) {
+				nextPlayerToRemainEqual = context.players[context.currentPlayer];
+			}
+
 			// Add the new player to the context
 			context.players.push({
 				name: name,
 				initiative: initiative
 			});
+
+			context.players = context.players.sort((a, b) => b.initiative - a.initiative);
+
+			if (
+				nextPlayerToRemainEqual &&
+				!comparePlayers(nextPlayerToRemainEqual, context.players[context.currentPlayer])
+			) {
+				nextPlayer();
+			}
 
 			// Clear the input fields after adding the player
 			name = '';
@@ -67,8 +93,10 @@
 	<h1 class="text-3xl font-bold mt-10 mb-16 text-center">Initiative tracker</h1>
 
 	<Table
-		data={context.players.sort((a, b) => b.initiative - a.initiative)}
+		data={context.players}
 		currentPlayer={context.currentPlayer}
+		{updateLocalstorage}
+		{reloadLocalstorage}
 	/>
 
 	{#if context.players.length > 1}
