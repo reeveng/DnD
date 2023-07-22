@@ -71,14 +71,14 @@
 		currentPlayer={context.currentPlayer}
 	/>
 
-	<button
-		class="bg-fuchsia-600 hover:bg-fuchsia-900 text-white font-bold py-2 px-4 rounded"
-		on:click={nextPlayer}
-	>
-		{context.currentPlayer == -1 ? 'Start game' : 'Next Player'}
-	</button>
-
-	<div class="my-10 md:my-16" />
+	{#if context.players.length > 1}
+		<button
+			class="bg-fuchsia-600 hover:bg-fuchsia-900 text-white font-bold py-2 px-4 rounded mb-5 md:mb-10"
+			on:click={nextPlayer}
+		>
+			{context.currentPlayer == -1 ? 'Start game' : 'Next Player'}
+		</button>
+	{/if}
 
 	<form class="flex flex-col gap-8 p-6 border-2 rounded-lg" on:submit={addPlayer}>
 		<h2 class="mb-2 mt-0">Add player</h2>
