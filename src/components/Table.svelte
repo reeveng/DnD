@@ -1,55 +1,64 @@
 <!-- eventually create a mobile friendly table :) -->
 
 <script lang="ts">
-	import { ArrowPath, ArrowUturnDown, ArrowUturnLeft, Check, Icon } from 'svelte-hero-icons';
+	import type { Player } from '$lib';
+	import { game } from '$stores/game';
+	import { ArrowUturnLeft, Check, Icon, Trash } from 'svelte-hero-icons';
 
-	export let data: any[] = [];
-	export let currentPlayer: number = -1;
-	export let updateLocalstorage: Function = () => {};
-	export let reloadLocalstorage: Function = () => {};
+	let players: Player[];
+	let currentPlayer: number = -1;
+	game.subscribe((value) => {
+		players = value.players;
+		currentPlayer = value.currentPlayer;
+	});
 
 	function capitalize(word: string) {
 		return word.slice(0, 1).toUpperCase() + word.slice(1).toLowerCase();
 	}
 
-	function sortDataByInitiative() {
-		// Sort the data array by the 'initiative' property in descending order
-		data = data.sort((a, b) => b.initiative - a.initiative);
-
-		// If 'currentPlayer' is out of bounds after sorting, reset it
-		if (currentPlayer < 0 || currentPlayer >= data.length) {
-			currentPlayer = -1;
-		}
-	}
-
 	let changes: boolean = false;
 </script>
 
-{#if data && data[0]}
+{#if players && players[0]}
 	<div class="w-full mb-10">
 		<table class="table w-full">
 			<thead>
 				<tr>
-					{#each Object.keys(data[0]) as key}
+					{#each Object.keys(players[0]) as key}
 						<th class="text-left">{capitalize(key)}</th>
 					{/each}
+					<th class="text-left">Actions</th>
 				</tr>
 			</thead>
 			<tbody>
-				{#each data as { name, initiative }, index}
-					<tr id={index == currentPlayer ? 'current' : ''}>
+				{#each players as { name, initiative }, index}
+					<tr
+						id={index == currentPlayer ? 'current' : ''}
+						aria-current={index == currentPlayer ? 'true' : undefined}
+					>
 						<td>
 							{name}
 						</td>
 						<td>
-							<!-- Add a bound input to update the player's initiative -->
 							<input
+								min="0"
 								type="number"
 								pattern="\d+"
-								bind:value={data[index].initiative}
+								bind:value={initiative}
 								class="bg-transparent w-16 outline-none border-none text-center"
 								on:input={() => (changes = true)}
 							/>
+						</td>
+						<td>
+							<button
+								title="remove player"
+								type="button"
+								class="ml-2 bg-neutral-500 hover:bg-neutral-950 text-white font-bold p-2 rounded-full"
+								on:click={() => game.deletePlayer(index)}
+							>
+								<Icon class="h-4 w-4" src={Trash} />
+								<span class="sr-only">Remove player</span>
+							</button>
 						</td>
 					</tr>
 				{/each}
@@ -62,19 +71,18 @@
 					type="button"
 					class="ml-auto flex bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full mt-4"
 					on:click={() => {
-						reloadLocalstorage();
+						game.undoChanges();
 						changes = false;
 					}}
 				>
-					<Icon class="h-6 w-6 mr-2 transform" src={ArrowPath} />
+					<Icon class="h-6 w-6 mr-2 transform" src={ArrowUturnLeft} />
 					Undo changes
 				</button>
 				<button
 					type="button"
 					class="flex bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full mt-4"
 					on:click={() => {
-						sortDataByInitiative();
-						updateLocalstorage();
+						game.confirmChanges();
 						changes = false;
 					}}
 				>
