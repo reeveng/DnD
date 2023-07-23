@@ -1,8 +1,9 @@
 import { writable } from 'svelte/store';
 import type { Writable } from 'svelte/store'; // Use a type-only import for Writable
 import type { GameContext, Player } from '$lib';
-import { comparePlayers } from '$lib/comparePlayers';
+import { samePlayer } from '$lib/samePlayer';
 import { browser } from '$app/environment';
+import { sortPlayerByInitiative } from '$lib/comparePlayers';
 
 function readFromLocalStorage(): GameContext | null {
 	if (browser) {
@@ -45,7 +46,7 @@ const createGameStore = () => {
 				// Check if the next player to remain equal exists and compare
 				if (
 					nextPlayerIndex < context.players.length &&
-					!comparePlayers(context.players[nextPlayerIndex], context.players[context.currentPlayer])
+					!samePlayer(context.players[nextPlayerIndex], context.players[context.currentPlayer])
 				) {
 					context.currentPlayer = nextPlayerIndex; // Move to the next player if they are not equal
 				}
@@ -87,7 +88,7 @@ const createGameStore = () => {
 					context.currentPlayer = Math.max(0, context.currentPlayer - 1);
 				}
 
-				context.players.sort((a: Player, b: Player) => b.initiative - a.initiative);
+				context.players.sort(sortPlayerByInitiative);
 
 				// Return the updated context
 				return context;
@@ -100,7 +101,7 @@ const createGameStore = () => {
 
 	const confirmChanges = () => {
 		update((context) => {
-			context.players.sort((a: Player, b: Player) => b.initiative - a.initiative);
+			context.players.sort(sortPlayerByInitiative);
 
 			if (browser) localStorage.setItem('gameContext', JSON.stringify(context));
 
