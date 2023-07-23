@@ -7,6 +7,7 @@
 	function resetForm() {
 		name = '';
 		initiative = NaN;
+		document.getElementById('name')?.focus();
 	}
 </script>
 
