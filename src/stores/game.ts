@@ -87,11 +87,11 @@ const createGameStore = () => {
 					context.currentPlayer = Math.max(0, context.currentPlayer - 1);
 				}
 
+				context.players.sort(sortPlayerByInitiative);
+
 				if (context.players.length < 2) {
 					context.currentPlayer = -1;
 				}
-
-				context.players.sort(sortPlayerByInitiative);
 
 				// Return the updated context
 				return context;
@@ -105,6 +105,10 @@ const createGameStore = () => {
 	const confirmChanges = () => {
 		update((context) => {
 			context.players.sort(sortPlayerByInitiative);
+
+			if (context.players.length < 2) {
+				context.currentPlayer = -1;
+			}
 
 			if (browser) localStorage.setItem('gameContext', JSON.stringify(context));
 
