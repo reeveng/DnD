@@ -87,6 +87,10 @@ const createGameStore = () => {
 					context.currentPlayer = Math.max(0, context.currentPlayer - 1);
 				}
 
+				if (context.players.length < 2) {
+					context.currentPlayer = -1;
+				}
+
 				context.players.sort(sortPlayerByInitiative);
 
 				// Return the updated context
