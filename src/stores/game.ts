@@ -19,8 +19,7 @@ const createGameStore = () => {
 	const { subscribe, set, update }: Writable<GameContext> = writable(
 		initialData || {
 			currentPlayer: -1,
-			players: [],
-			playersToDelete: []
+			players: []
 		}
 	);
 

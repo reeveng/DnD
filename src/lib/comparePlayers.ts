@@ -1,18 +1,10 @@
 import type { Player } from '$lib';
 
-export function comparePlayers<T extends Player>(obj1: T, obj2: T): boolean {
-	const keys1 = Object.keys(obj1) as (keyof T)[];
-	const keys2 = Object.keys(obj2) as (keyof T)[];
-
-	if (keys1.length !== keys2.length) {
+export function comparePlayers(player1: Player, player2: Player): boolean {
+	if (!player1 || !player2) {
+		// Handle the case where either player is undefined or null
 		return false;
 	}
 
-	for (const key of keys1) {
-		if (obj1[key] !== obj2[key]) {
-			return false;
-		}
-	}
-
-	return true;
+	return player1.initiative === player2.initiative;
 }
