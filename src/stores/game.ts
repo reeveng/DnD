@@ -1,9 +1,8 @@
 import { writable } from 'svelte/store';
 import type { Writable } from 'svelte/store'; // Use a type-only import for Writable
 import type { GameContext, Player } from '$lib';
-import { samePlayer } from '$lib/samePlayer';
+import { samePlayer, sortPlayerByInitiative } from '$lib/playerFunctions';
 import { browser } from '$app/environment';
-import { sortPlayerByInitiative } from '$lib/comparePlayers';
 
 function readFromLocalStorage(): GameContext | null {
 	if (browser) {
