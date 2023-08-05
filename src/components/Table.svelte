@@ -53,7 +53,7 @@
 							<button
 								title="remove player"
 								type="button"
-								class="ml-2 bg-neutral-500 hover:bg-neutral-950 text-white font-bold p-2 rounded-full"
+								class="bg-neutral-500 hover:bg-neutral-950 text-white font-bold p-2 rounded-full"
 								on:click={() => game.deletePlayer(index)}
 							>
 								<Icon class="h-4 w-4" src={Trash} />
