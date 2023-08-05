@@ -27,7 +27,7 @@
 					{#each Object.keys(players[0]) as key}
 						<th class="text-left">{capitalize(key)}</th>
 					{/each}
-					<th class="text-left">Actions</th>
+					<th class="text-right">Actions</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -49,7 +49,7 @@
 								on:input={() => (changes = true)}
 							/>
 						</td>
-						<td>
+						<td class="text-right">
 							<button
 								title="remove player"
 								type="button"
@@ -78,6 +78,7 @@
 					<Icon class="h-6 w-6 mr-2 transform" src={ArrowUturnLeft} />
 					Undo changes
 				</button>
+
 				<button
 					type="button"
 					class="flex bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full mt-4"
